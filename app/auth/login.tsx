@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Pressable } from 'react-native';
 import { Link, useRouter, useLocalSearchParams } from 'expo-router';
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react-native';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,7 +30,7 @@ export default function Login() {
 
     try {
       await login(email, password, role);
-      router.replace(role === 'client' ? '/client/dashboard' : '/rider/dashboard' as any);
+      router.replace(role === 'client' ? '/client/dashboard' : '/rider/dashboard');
     } catch {
       setFormError(error || 'Login failed');
     }
@@ -114,7 +114,7 @@ export default function Login() {
               </View>
               <Text style={styles.checkboxLabel}>Remember me</Text>
             </Pressable>
-            <Link href="/forgot-password" as any style={styles.forgotPassword}>
+            <Link href="/forgot-password" style={styles.forgotPassword}>
               Forgot password?
             </Link>
           </View>
@@ -131,8 +131,8 @@ export default function Login() {
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
-          <Link href="/auth/register" as any style={styles.footerLink}>
+          <Text style={styles.footerText}>{"Don't have an account? "}</Text>
+          <Link href="/auth/register" style={styles.footerLink}>
             Register
           </Link>
         </View>
@@ -140,8 +140,6 @@ export default function Login() {
     </KeyboardAvoidingView>
   );
 }
-
-import { TouchableOpacity } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {

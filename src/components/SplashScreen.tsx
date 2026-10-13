@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Animated, Dimensions, Image } from 'react-native';
 
 // Brand Colors
 const COLORS = {
@@ -62,10 +62,11 @@ const SplashScreen: React.FC = () => {
                     }
                 ]}
             >
-                <Text style={styles.logoText}>
-                    <Text style={styles.logoBlue}>RUNN</Text>
-                    <Text style={styles.logoRed}>S</Text>
-                </Text>
+                <Image
+                    source={require('../../assets/splash-icon.png')}
+                    style={styles.logoImage}
+                    resizeMode="contain"
+                />
             </Animated.View>
 
             {/* Animated Tagline */}
@@ -96,17 +97,9 @@ const styles = StyleSheet.create({
     logoContainer: {
         marginBottom: 10,
     },
-    logoText: {
-        fontSize: 56,
-        fontWeight: '900',
-        fontStyle: 'italic',
-        letterSpacing: -2,
-    },
-    logoBlue: {
-        color: COLORS.primaryBlue,
-    },
-    logoRed: {
-        color: COLORS.primaryRed,
+    logoImage: {
+        width: 180,
+        height: 180,
     },
     taglineContainer: {
         flexDirection: 'row',

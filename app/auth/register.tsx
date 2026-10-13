@@ -105,7 +105,7 @@ export default function Register() {
         phone: formData.phone,
         role,
       });
-      router.replace(role === 'client' ? '/client/profile-setup' : '/rider/profile-setup' as any);
+      router.replace(role === 'client' ? '/client/profile-setup' : '/rider/profile-setup');
     } catch {
       setFormError(error || 'Registration failed');
     }
@@ -234,9 +234,9 @@ export default function Register() {
           <View style={styles.termsContainer}>
             <Text style={styles.termsText}>
               By creating an account, you agree to our{' '}
-              <Link href="/terms" as any style={styles.termsLink}>Terms of Service</Link>
+              <Link href="/terms" style={styles.termsLink}>Terms of Service</Link>
               {' '}and{' '}
-              <Link href="/privacy" as any style={styles.termsLink}>Privacy Policy</Link>
+              <Link href="/privacy" style={styles.termsLink}>Privacy Policy</Link>
             </Text>
           </View>
 
@@ -253,7 +253,7 @@ export default function Register() {
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>Already have an account? </Text>
-          <Link href="/auth/login" as any style={styles.footerLink}>
+          <Link href="/auth/login" style={styles.footerLink}>
             Login
           </Link>
         </View>

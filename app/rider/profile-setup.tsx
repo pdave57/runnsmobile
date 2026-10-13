@@ -50,7 +50,7 @@ export default function RiderProfileSetup() {
       });
       await updateProfile({ ...formData, profileComplete: true });
       Alert.alert('Success', 'Profile completed! You can now go online.');
-      router.replace('/rider/dashboard' as any);
+      router.replace('/rider/dashboard');
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to complete profile');
     } finally {
@@ -189,7 +189,7 @@ export default function RiderProfileSetup() {
     >
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Link href="/rider/dashboard" as any style={styles.backButton}>
+          <Link href="/rider/dashboard" style={styles.backButton}>
             <ArrowLeft size={24} color="#D91E36" />
           </Link>
           <Text style={styles.pageTitle}>Complete Profile</Text>

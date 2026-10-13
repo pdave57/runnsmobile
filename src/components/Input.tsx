@@ -1,81 +1,25 @@
 import React, { forwardRef } from 'react';
-import { TextInput, TextInputProps, View, StyleSheet, Text } from 'react-native';
-import styled from 'styled-components/native';
+import { TextInput, TextInputProps, View, StyleSheet, Text, ViewStyle, TextStyle } from 'react-native';
 
-interface InputProps extends Omit<TextInputProps, 'onChangeText' | 'value' | 'onFocus' | 'onBlur'> {
+interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
   icon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   containerStyle?: ViewStyle;
   inputStyle?: TextStyle;
+  disabled?: boolean;
+  helperText?: string;
 }
 
-import { ViewStyle, TextStyle } from 'react-native';
-
-const InputContainer = styled(View)<{ $hasError: boolean; $focused: boolean }>`
-  width: 100%;
-  margin-bottom: ${({ $hasError }) => $hasError ? '4px' : '0px'};
-`;
-
-const Label = styled(Text)`
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.textDark};
-  margin-bottom: 8px;
-`;
-
-const InputWrapper = styled(View)<{ $hasError: boolean; $focused: boolean; $disabled: boolean }>`
-  flex-direction: row;
-  align-items: center;
-  width: 100%;
-  border-width: 2px;
-  border-radius: 10px;
-  background-color: ${({ $disabled, theme }) => $disabled ? theme.colors.border : theme.colors.background};
-  border-color: ${({ $hasError, $focused, theme }) => 
-    $hasError ? theme.colors.primaryRed : 
-    $focused ? theme.colors.primaryBlue : 
-    theme.colors.border
-  };
-  padding-horizontal: 12px;
-  min-height: 52px;
-  box-shadow: ${({ $focused, theme }) => 
-    $focused && !theme.colors.border.includes('primary') ? `0 0 0 3px ${theme.colors.primaryBlue}33` : 'none'
-  };
-`;
-
-const StyledTextInput = styled(TextInput)`
-  flex: 1;
-  font-size: 1rem;
-  color: ${({ theme }) => theme.colors.textDark};
-  padding-vertical: 12px;
-  padding-horizontal: ${({ $hasLeftIcon }) => $hasLeftIcon ? '0px' : '12px'};
-`;
-
-const IconContainer = styled(View)`
-  position: absolute;
-  left: 14px;
-  z-index: 1;
-  pointer-events: none;
-`;
-
-const RightIconContainer = styled(View)`
-  position: absolute;
-  right: 14px;
-  z-index: 1;
-`;
-
-const ErrorText = styled(Text)`
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.colors.primaryRed};
-  margin-top: 6px;
-`;
-
-const HelperText = styled(Text)`
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.colors.textLight};
-  margin-top: 6px;
-`;
+const COLORS = {
+  textDark: '#1A1A1A',
+  textLight: '#999',
+  background: '#fff',
+  border: '#f0f0f0',
+  primaryBlue: '#132B5E',
+  primaryRed: '#D91E36',
+};
 
 export const Input = forwardRef<TextInput, InputProps>(
   (
@@ -91,6 +35,7 @@ export const Input = forwardRef<TextInput, InputProps>(
       onFocus,
       onBlur,
       disabled,
+      helperText,
       ...props
     },
     ref
@@ -113,31 +58,48 @@ export const Input = forwardRef<TextInput, InputProps>(
       onBlur?.(e);
     };
 
+    const borderColor = hasError
+      ? COLORS.primaryRed
+      : focused
+      ? COLORS.primaryBlue
+      : COLORS.border;
+
+    const backgroundColor = disabled ? COLORS.border : COLORS.background;
+
     return (
-      <InputContainer style={containerStyle} $hasError={hasError} $focused={focused}>
-        {label && <Label>{label}</Label>}
-        <InputWrapper $hasError={hasError} $focused={focused} $disabled={!!disabled}>
-          {icon && <IconContainer>{icon}</IconContainer>}
-          <StyledTextInput
+      <View style={[styles.container, containerStyle]} >
+        {label && <Text style={styles.label}>{label}</Text>}
+        <View style={[
+          styles.inputWrapper,
+          {
+            backgroundColor,
+            borderColor,
+            borderWidth: 2,
+          },
+        ]}>
+          {icon && <View style={styles.iconContainer}>{icon}</View>}
+          <TextInput
             ref={ref}
             value={value}
             onChangeText={handleChangeText}
             onFocus={handleFocus}
             onBlur={handleBlur}
-            disabled={disabled}
+            editable={!disabled}
             style={[
               styles.input,
-              { paddingLeft: hasLeftIcon ? 48 : 12, paddingRight: rightIcon ? 48 : 12 },
+              {
+                paddingLeft: hasLeftIcon ? 48 : 12,
+                paddingRight: rightIcon ? 48 : 12,
+              },
               inputStyle,
             ]}
-            $hasLeftIcon={hasLeftIcon}
             {...props}
           />
-          {rightIcon && <RightIconContainer>{rightIcon}</RightIconContainer>}
-        </InputWrapper>
-        {error && <ErrorText>{error}</ErrorText>}
-        {props.placeholderTextColor && !error && <HelperText>{props.placeholderTextColor}</HelperText>}
-      </InputContainer>
+          {rightIcon && <View style={styles.rightIconContainer}>{rightIcon}</View>}
+        </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
+        {helperText && !error && <Text style={styles.helperText}>{helperText}</Text>}
+      </View>
     );
   }
 );
@@ -145,8 +107,50 @@ export const Input = forwardRef<TextInput, InputProps>(
 Input.displayName = 'Input';
 
 const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    marginBottom: 0,
+  },
+  label: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: COLORS.textDark,
+    marginBottom: 8,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    minHeight: 52,
+  },
   input: {
     flex: 1,
+    fontSize: 16,
+    color: COLORS.textDark,
+    paddingVertical: 12,
+  },
+  iconContainer: {
+    position: 'absolute',
+    left: 14,
+    zIndex: 1,
+    pointerEvents: 'none',
+  },
+  rightIconContainer: {
+    position: 'absolute',
+    right: 14,
+    zIndex: 1,
+  },
+  errorText: {
+    fontSize: 12,
+    color: COLORS.primaryRed,
+    marginTop: 6,
+  },
+  helperText: {
+    fontSize: 12,
+    color: COLORS.textLight,
+    marginTop: 6,
   },
 });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { Link, useLocalSearchParams, useRouter } from 'expo-router';
+import { Link, useRouter, usePathname, useLocalSearchParams } from 'expo-router';
 import { Home, Package, ShoppingBag, MapPin, User, Menu, Grid, LogOut, Settings, Wallet } from 'lucide-react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/contexts/NotificationContext';
@@ -30,13 +30,14 @@ interface NavItem {
 export function BottomNavigation() {
   const { user } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const params = useLocalSearchParams();
   const { notifications } = useNotifications();
 
   if (!user) return null;
 
   const navItems: NavItem[] = user.role === 'rider' ? riderNavItems : clientNavItems;
-  const currentPath = router.pathname || '/';
+  const currentPath = pathname || '/';
 
   return (
     <View style={styles.container} pointerEvents="box-none">

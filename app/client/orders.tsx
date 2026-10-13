@@ -30,7 +30,7 @@ export default function ClientOrders() {
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
-        <Link href="/client/dashboard" as any style={styles.backButton}>
+        <Link href="/client/dashboard" style={styles.backButton}>
           <ArrowLeft size={24} color="#132B5E" />
         </Link>
         <Text style={styles.pageTitle}>My Orders</Text>
@@ -77,7 +77,7 @@ export default function ClientOrders() {
       ) : filteredOrders.length > 0 ? (
         <View style={styles.ordersList}>
           {filteredOrders.map(order => (
-            <Link key={order.id} href={`/client/orders/${order.id}`} as any>
+            <Link key={order.id} href={`/client/orders/${order.id}`} asChild>
               <OrderCard order={order} />
             </Link>
           ))}
@@ -150,7 +150,7 @@ function OrderCard({ order }: OrderCardProps) {
   );
 }
 
-import { Pressable, Calendar } from 'react-native';
+import { Pressable } from 'react-native';
 
 const styles = StyleSheet.create({
   scrollView: {

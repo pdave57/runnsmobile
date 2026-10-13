@@ -57,7 +57,7 @@ export default function NewOrder() {
     >
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Link href="/client/orders" as any style={styles.backButton}>
+          <Link href="/client/orders" style={styles.backButton}>
             <ArrowLeft size={24} color="#132B5E" />
           </Link>
           <Text style={styles.pageTitle}>New Order</Text>

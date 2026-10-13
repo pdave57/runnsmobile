@@ -47,7 +47,7 @@ export default function DispatchPage() {
     >
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Link href="/client/dashboard" as any style={styles.backButton}>
+          <Link href="/client/dashboard" style={styles.backButton}>
             <ArrowLeft size={24} color="#132B5E" />
           </Link>
           <Text style={styles.pageTitle}>Order Dispatch</Text>
@@ -62,7 +62,7 @@ export default function DispatchPage() {
             <View style={styles.infoText}>
               <Text style={styles.infoTitle}>Quick Dispatch</Text>
               <Text style={styles.infoDescription}>
-                Send packages anywhere in Lagos. We'll match you with a nearby rider.
+                Send packages anywhere in Lagos. {"We'll"} match you with a nearby rider.
               </Text>
             </View>
           </View>

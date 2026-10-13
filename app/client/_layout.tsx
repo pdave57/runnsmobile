@@ -27,7 +27,7 @@ export default function ClientLayout() {
 
 function ClientScreenWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'horizontal']}>
+    <SafeAreaView style={styles.container}>
       <Header />
       <View style={styles.content}>{children}</View>
       <BottomNavigation />

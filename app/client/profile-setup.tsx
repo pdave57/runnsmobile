@@ -28,7 +28,7 @@ export default function ClientProfileSetup() {
     try {
       await updateProfile({ ...formData, profileComplete: true });
       Alert.alert('Success', 'Profile completed!');
-      router.replace('/client/dashboard' as any);
+      router.replace('/client/dashboard');
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to complete profile');
     } finally {
@@ -43,7 +43,7 @@ export default function ClientProfileSetup() {
     >
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Link href="/client/dashboard" as any style={styles.backButton}>
+          <Link href="/client/dashboard" style={styles.backButton}>
             <ArrowLeft size={24} color="#132B5E" />
           </Link>
           <Text style={styles.pageTitle}>Complete Profile</Text>

@@ -1,10 +1,9 @@
 import React from 'react';
-import { Pressable, Text, StyleSheet, View, ActivityIndicator, PressableProps } from 'react-native';
-import styled from 'styled-components/native';
+import { Pressable, Text, StyleSheet, View, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
 
-interface ButtonProps extends Omit<PressableProps, 'children' | 'onPress'> {
+interface ButtonProps {
   title: string;
-  onPress: () => void;
+  onPress: (event?: any) => void;
   variant?: 'primary' | 'primary-rider' | 'outline' | 'icon';
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
@@ -12,51 +11,83 @@ interface ButtonProps extends Omit<PressableProps, 'children' | 'onPress'> {
   fullWidth?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  style?: ViewStyle;
 }
 
-const StyledButton = styled(Pressable)<{ $variant: ButtonProps['variant']; $size: ButtonProps['size']; $fullWidth: boolean; $disabled: boolean }>`
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  border-radius: ${({ $size }) => $size === 'sm' ? '8px' : $size === 'lg' ? '16px' : '12px'};
-  padding-vertical: ${({ $size }) => $size === 'sm' ? '10px' : $size === 'lg' ? '18px' : '14px'};
-  padding-horizontal: ${({ $size }) => $size === 'sm' ? '16px' : $size === 'lg' ? '28px' : '24px'};
-  width: ${({ $fullWidth }) => $fullWidth ? '100%' : 'auto'};
-  opacity: ${({ $disabled }) => $disabled ? 0.6 : 1};
-  background-color: ${({ $variant, theme }) => {
-    switch ($variant) {
-      case 'primary': return theme.colors.primaryBlue;
-      case 'primary-rider': return theme.colors.primaryRed;
-      case 'outline': return 'transparent';
-      case 'icon': return theme.colors.border;
-      default: return theme.colors.primaryBlue;
-    }
-  }};
-  border-width: ${({ $variant }) => $variant === 'outline' ? '2px' : 0};
-  border-color: ${({ $variant, theme }) => $variant === 'outline' ? theme.colors.border : 'transparent'};
-  shadow-color: ${({ $variant, theme }) => {
-    if ($variant === 'primary') return theme.colors.primaryBlue;
-    if ($variant === 'primary-rider') return theme.colors.primaryRed;
-    return 'transparent';
-  }};
-  shadow-offset: 0px 10px;
-  shadow-opacity: 0.2;
-  shadow-radius: 20px;
-  elevation: 5;
-`;
+const COLORS = {
+  primaryBlue: '#132B5E',
+  primaryRed: '#D91E36',
+  textDark: '#1A1A1A',
+  textLight: '#999',
+  border: '#f0f0f0',
+  white: '#fff',
+};
 
-const ButtonText = styled(Text)<{ $variant: ButtonProps['variant']; $size: ButtonProps['size']; $disabled: boolean }>`
-  font-size: ${({ $size }) => $size === 'sm' ? '0.875rem' : $size === 'lg' ? '1.125rem' : '1rem'};
-  font-weight: 700;
-  color: ${({ $variant, $disabled, theme }) => {
-    if ($disabled) return theme.colors.textLight;
-    if ($variant === 'outline') return theme.colors.textDark;
-    return '#fff';
-  }};
-  margin-horizontal: ${({ $leftIcon, $rightIcon }) => ($leftIcon || $rightIcon) ? '8px' : 0};
-`;
+const getBackgroundColor = (variant: ButtonProps['variant'], disabled: boolean) => {
+  if (disabled) return COLORS.border;
+  switch (variant) {
+    case 'primary': return COLORS.primaryBlue;
+    case 'primary-rider': return COLORS.primaryRed;
+    case 'outline': return 'transparent';
+    case 'icon': return COLORS.border;
+    default: return COLORS.primaryBlue;
+  }
+};
 
-export const Button = React.forwardRef<Pressable, ButtonProps>(
+const getTextColor = (variant: ButtonProps['variant'], disabled: boolean) => {
+  if (disabled) return COLORS.textLight;
+  if (variant === 'outline') return COLORS.textDark;
+  return COLORS.white;
+};
+
+const getBorderColor = (variant: ButtonProps['variant']) => {
+  if (variant === 'outline') return COLORS.border;
+  return 'transparent';
+};
+
+const getBorderWidth = (variant: ButtonProps['variant']) => {
+  return variant === 'outline' ? 2 : 0;
+};
+
+const getShadowColor = (variant: ButtonProps['variant']) => {
+  if (variant === 'primary') return COLORS.primaryBlue;
+  if (variant === 'primary-rider') return COLORS.primaryRed;
+  return 'transparent';
+};
+
+const getPaddingVertical = (size: ButtonProps['size']) => {
+  switch (size) {
+    case 'sm': return 10;
+    case 'lg': return 18;
+    default: return 14;
+  }
+};
+
+const getPaddingHorizontal = (size: ButtonProps['size']) => {
+  switch (size) {
+    case 'sm': return 16;
+    case 'lg': return 28;
+    default: return 24;
+  }
+};
+
+const getBorderRadius = (size: ButtonProps['size']) => {
+  switch (size) {
+    case 'sm': return 8;
+    case 'lg': return 16;
+    default: return 12;
+  }
+};
+
+const getFontSize = (size: ButtonProps['size']) => {
+  switch (size) {
+    case 'sm': return 14;
+    case 'lg': return 18;
+    default: return 16;
+  }
+};
+
+export const Button = React.forwardRef<View, ButtonProps>(
   (
     {
       title,
@@ -69,36 +100,59 @@ export const Button = React.forwardRef<Pressable, ButtonProps>(
       leftIcon,
       rightIcon,
       style,
-      ...props
     },
     ref
   ) => {
     const isDisabled = disabled || loading;
 
     return (
-      <StyledButton
+      <Pressable
         ref={ref}
         onPress={onPress}
         disabled={isDisabled}
-        $variant={variant}
-        $size={size}
-        $fullWidth={fullWidth}
-        $disabled={isDisabled}
-        style={[styles.button, style]}
+        style={[
+          styles.button,
+          {
+            backgroundColor: getBackgroundColor(variant, isDisabled),
+            borderColor: getBorderColor(variant),
+            borderWidth: getBorderWidth(variant),
+            borderRadius: getBorderRadius(size),
+            paddingVertical: getPaddingVertical(size),
+            paddingHorizontal: getPaddingHorizontal(size),
+            width: fullWidth ? '100%' : 'auto',
+            opacity: isDisabled ? 0.6 : 1,
+            shadowColor: getShadowColor(variant),
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.2,
+            shadowRadius: 20,
+            elevation: 5,
+          },
+          style,
+        ]}
         accessibilityRole="button"
         accessibilityState={{ disabled: isDisabled }}
-        {...props}
       >
         {loading ? (
-          <ActivityIndicator size="small" color={variant === 'outline' ? '#132B5E' : '#fff'} />
+          <ActivityIndicator size="small" color={variant === 'outline' ? COLORS.primaryBlue : COLORS.white} />
         ) : (
           <>
             {leftIcon && <View style={styles.iconContainer}>{leftIcon}</View>}
-            <ButtonText $variant={variant} $size={size} $disabled={isDisabled}>{title}</ButtonText>
+            <Text
+              style={[
+                styles.text,
+                {
+                  fontSize: getFontSize(size),
+                  color: getTextColor(variant, isDisabled),
+                  marginHorizontal: (leftIcon || rightIcon) ? 8 : 0,
+                },
+              ]}
+            >
+              {title}
+            </Text>
             {rightIcon && <View style={styles.iconContainer}>{rightIcon}</View>}
           </>
         )}
-      </StyledButton>
+      </Pressable>
     );
   }
 );
@@ -107,7 +161,13 @@ Button.displayName = 'Button';
 
 const styles = StyleSheet.create({
   button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     minHeight: 48,
+  },
+  text: {
+    fontWeight: '700',
   },
   iconContainer: {
     justifyContent: 'center',

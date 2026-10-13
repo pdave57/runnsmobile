@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Link } from 'expo-router';
 import { ArrowLeft, Wallet, CreditCard, DollarSign, Calendar, TrendingUp, Download } from 'lucide-react-native';
 import { Card } from '@/components/Card';
@@ -21,7 +21,7 @@ export default function RiderEarnings() {
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
-        <Link href="/rider/dashboard" as any style={styles.backButton}>
+        <Link href="/rider/dashboard" style={styles.backButton}>
           <ArrowLeft size={24} color="#D91E36" />
         </Link>
         <Text style={styles.pageTitle}>Earnings</Text>
@@ -130,13 +130,13 @@ export default function RiderEarnings() {
       <Card padding="lg" style={styles.historyCard}>
         <Text style={styles.sectionTitle}>Recent Transactions</Text>
         <View style={styles.transactionList}>
-          {[
-            { date: 'Today, 2:30 PM', description: 'Delivery #ORD-1245', amount: 2500, type: 'earning' },
-            { date: 'Today, 11:15 AM', description: 'Delivery #ORD-1243', amount: 1800, type: 'earning' },
-            { date: 'Yesterday, 4:20 PM', description: 'Delivery #ORD-1240', amount: 3200, type: 'earning' },
-            { date: 'Yesterday, 10:00 AM', description: 'Weekly Bonus', amount: 5000, type: 'bonus' },
-            { date: '2 days ago', description: 'Withdrawal to Bank', amount: -20000, type: 'withdrawal' },
-          ].map((tx, i) => (
+          {([
+            { date: 'Today, 2:30 PM', description: 'Delivery #ORD-1245', amount: 2500, type: 'earning' as const },
+            { date: 'Today, 11:15 AM', description: 'Delivery #ORD-1243', amount: 1800, type: 'earning' as const },
+            { date: 'Yesterday, 4:20 PM', description: 'Delivery #ORD-1240', amount: 3200, type: 'earning' as const },
+            { date: 'Yesterday, 10:00 AM', description: 'Weekly Bonus', amount: 5000, type: 'bonus' as const },
+            { date: '2 days ago', description: 'Withdrawal to Bank', amount: -20000, type: 'withdrawal' as const },
+          ] as const).map((tx, i) => (
             <TransactionRow key={i} transaction={tx} />
           ))}
         </View>
@@ -203,7 +203,7 @@ function TransactionRow({ transaction }: TransactionRowProps) {
       <IconCircle size="md" bgColor={isPositive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}>
         <Icon size={20} color={isPositive ? '#10b981' : '#ef4444'} />
       </IconCircle>
-      <View style={styles.transactionInfo} flex={1}>
+      <View style={[styles.transactionInfo, { flex: 1 }]}>
         <Text style={styles.transactionDescription}>{transaction.description}</Text>
         <Text style={styles.transactionDate}>{transaction.date}</Text>
       </View>

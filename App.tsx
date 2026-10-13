@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Animated, Text } from 'react-native';
+import { View, StyleSheet, Animated, Text, StatusBar } from 'react-native';
 import SplashScreen from './components/SplashScreen'; // Adjust path as needed
 
 export default function App() {
@@ -34,7 +34,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text>Open up App.tsx to start working on your app!</Text>
-      {/* <StatusBar style="auto" /> */}
+      <StatusBar barStyle="light-content" backgroundColor="#132B5E" />
     </View>
   );
 }

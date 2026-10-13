@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Link } from 'expo-router';
 import { Wallet, Truck, CheckCircle, Clock, MapPin, DollarSign, TrendingUp } from 'lucide-react-native';
 import { useAuth } from '@/contexts/AuthContext';
-import { useOrders } from '@/hooks/useOrders';
-import { useRiderAvailability } from '@/hooks/useOrders';
+import { useOrders, useRiderAvailability } from '@/hooks/useOrders';
 import { Card } from '@/components/Card';
 import { Badge } from '@/components/Badge';
 import { IconCircle } from '@/components/IconCircle';
@@ -62,7 +61,7 @@ export default function RiderDashboard() {
         </View>
       </View>
 
-      <Text style={styles.sectionTitle}>Today's Stats</Text>
+      <Text style={styles.sectionTitle}>{"Today's Stats"}</Text>
       <View style={styles.statsGrid}>
         <StatCard
           title="Earnings Today"
@@ -101,7 +100,7 @@ export default function RiderDashboard() {
           </View>
           <View style={styles.ordersList}>
             {activeOrders.map(order => (
-              <Link key={order.id} href={`/rider/orders/${order.id}`} as any>
+              <Link key={order.id} href={`/rider/orders/${order.id}`} asChild>
                 <RiderOrderCard order={order} />
               </Link>
             ))}
@@ -116,7 +115,7 @@ export default function RiderDashboard() {
           </View>
           <View style={styles.ordersList}>
             {pendingDispatches.slice(0, 3).map(order => (
-              <Link key={order.id} href={`/rider/orders/${order.id}`} as any>
+              <Link key={order.id} href={`/rider/orders/${order.id}`} asChild>
                 <RiderOrderCard order={order} showAccept={true} />
               </Link>
             ))}
@@ -192,7 +191,7 @@ function RiderOrderCard({ order, showAccept }: RiderOrderCardProps) {
           </View>
         </View>
         <Badge variant={showAccept ? 'warning' : 'primary'} size="md">
-          {order.status.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+          {order.status.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
         </Badge>
       </View>
       <View style={styles.orderRoute}>

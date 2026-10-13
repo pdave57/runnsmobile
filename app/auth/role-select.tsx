@@ -11,7 +11,7 @@ export default function RoleSelect() {
   const router = useRouter();
 
   const handleRoleSelect = (role: 'client' | 'rider') => {
-    router.push(`/auth/login?role=${role}` as any);
+    router.push(`/auth/login?role=${role}`);
   };
 
   return (

@@ -10,7 +10,7 @@ interface IconCircleProps {
   style?: ViewStyle;
 }
 
-const sizeMap: Record<IconCircleProps['size'], { width: number; height: number; borderRadius: number }> = {
+const sizeMap: Record<string, { width: number; height: number; borderRadius: number }> = {
   sm: { width: 40, height: 40, borderRadius: 10 },
   md: { width: 48, height: 48, borderRadius: 12 },
   lg: { width: 64, height: 64, borderRadius: 16 },

@@ -10,7 +10,7 @@ interface BadgeProps {
   textStyle?: TextStyle;
 }
 
-const badgeColors: Record<BadgeProps['variant'], { bg: string; text: string }> = {
+const badgeColors: Record<string, { bg: string; text: string }> = {
   default: { bg: '#f0f0f0', text: '#555555' },
   success: { bg: 'rgba(16, 185, 129, 0.1)', text: '#10b981' },
   warning: { bg: 'rgba(245, 158, 11, 0.1)', text: '#f59e0b' },
@@ -20,7 +20,7 @@ const badgeColors: Record<BadgeProps['variant'], { bg: string; text: string }> =
   rider: { bg: 'rgba(217, 30, 54, 0.1)', text: '#D91E36' },
 };
 
-const badgeSizes: Record<BadgeProps['size'], { px: number; py: number; fontSize: number; borderRadius: number }> = {
+const badgeSizes: Record<string, { px: number; py: number; fontSize: number; borderRadius: number }> = {
   sm: { px: 8, py: 4, fontSize: 11, borderRadius: 12 },
   md: { px: 12, py: 6, fontSize: 12, borderRadius: 16 },
   lg: { px: 16, py: 8, fontSize: 13, borderRadius: 20 },
@@ -32,13 +32,13 @@ const StyledBadge = styled(View)<{ $variant: BadgeProps['variant']; $size: Badge
   padding-horizontal: ${({ $size }) => badgeSizes[$size || 'md'].px}px;
   padding-vertical: ${({ $size }) => badgeSizes[$size || 'md'].py}px;
   border-radius: ${({ $size }) => badgeSizes[$size || 'md'].borderRadius}px;
-  background-color: ${({ $variant, theme }) => badgeColors[$variant || 'default'].bg};
+  background-color: ${({ $variant }) => badgeColors[($variant || 'default') as keyof typeof badgeColors].bg};
 `;
 
 const BadgeText = styled(Text)<{ $variant: BadgeProps['variant']; $size: BadgeProps['size'] }>`
   font-size: ${({ $size }) => badgeSizes[$size || 'md'].fontSize}px;
   font-weight: 600;
-  color: ${({ $variant, theme }) => badgeColors[$variant || 'default'].text};
+  color: ${({ $variant }) => badgeColors[($variant || 'default') as keyof typeof badgeColors].text};
 `;
 
 export const Badge: React.FC<BadgeProps> = ({

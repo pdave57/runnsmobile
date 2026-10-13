@@ -69,7 +69,7 @@ export default function ShopForMePage() {
     >
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Link href="/client/dashboard" as any style={styles.backButton}>
+          <Link href="/client/dashboard" style={styles.backButton}>
             <ArrowLeft size={24} color="#132B5E" />
           </Link>
           <Text style={styles.pageTitle}>Shop for Me</Text>
@@ -84,7 +84,7 @@ export default function ShopForMePage() {
             <View style={styles.infoText}>
               <Text style={styles.infoTitle}>How it works</Text>
               <Text style={styles.infoDescription}>
-                Tell us what you need, we'll buy and deliver it to your doorstep.
+                Tell us what you need, {"we'll"} buy and deliver it to your doorstep.
                 You pay for items + delivery fee upon delivery.
               </Text>
             </View>

@@ -15,7 +15,7 @@ export default function RootLayout() {
           <Slot />
           <NotificationToast />
           <OrderAssignmentListener />
-          <StatusBar style="light" backgroundColor="#132B5E" />
+          <StatusBar style="light" />
         </NotificationProvider>
       </AuthProvider>
     </SafeAreaProvider>

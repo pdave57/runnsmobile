@@ -23,10 +23,8 @@ const HeroBanner: React.FC = () => {
             {/* Video Background */}
             <Video
                 ref={videoRef}
-                // Replace this URL with your actual rider delivery video URL
-                source={{
-                    uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
-                }}
+                // Local video from assets folder
+                source={require('../../assets/runns_mobile_portrait_fit.mp4')}
                 style={styles.video}
                 resizeMode={ResizeMode.COVER}
                 isLooping

@@ -52,7 +52,7 @@ export default function ClientProfile() {
     >
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Link href="/client/dashboard" as any style={styles.backButton}>
+          <Link href="/client/dashboard" style={styles.backButton}>
             <ArrowLeft size={24} color="#132B5E" />
           </Link>
           <Text style={styles.pageTitle}>Profile</Text>

@@ -57,7 +57,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ notification, index, hideNotifica
         <IconCircle size="md" bgColor={bgColor} style={styles.iconWrapper}>
           <Icon size={20} color={color} />
         </IconCircle>
-        <View style={styles.textContainer} flex={1}>
+        <View style={[styles.textContainer, { flex: 1 }]}>
           <Text style={styles.title} numberOfLines={1}>{notification.title}</Text>
           {notification.message && (
             <Text style={styles.message} numberOfLines={2}>{notification.message}</Text>

@@ -34,7 +34,7 @@ export default function ClientDashboard() {
         {quickActions.map((action, i) => {
           const Icon = action.icon;
           return (
-            <Link key={action.label} href={action.path} as any>
+            <Link key={action.label} href={action.path} asChild>
               <View style={styles.actionCard}>
                 <IconCircle size="lg" bgColor={action.bgColor}>
                   <Icon size={28} color={action.color} />
@@ -50,13 +50,13 @@ export default function ClientDashboard() {
         <>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Active Orders</Text>
-            <Link href="/client/orders" as any style={styles.viewAllLink}>
+            <Link href="/client/orders" style={styles.viewAllLink}>
               View all
             </Link>
           </View>
           <View style={styles.ordersList}>
             {activeOrders.map((order) => (
-              <Link key={order.id} href={`/client/orders/${order.id}`} as any>
+              <Link key={order.id} href={`/client/orders/${order.id}`} asChild>
                 <OrderCard order={order} />
               </Link>
             ))}
@@ -66,7 +66,7 @@ export default function ClientDashboard() {
 
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Recent Orders</Text>
-        <Link href="/client/orders" as any style={styles.viewAllLink}>
+        <Link href="/client/orders" style={styles.viewAllLink}>
           View all
         </Link>
       </View>
@@ -83,7 +83,7 @@ export default function ClientDashboard() {
       ) : recentOrders.length > 0 ? (
         <View style={styles.ordersList}>
           {recentOrders.map((order) => (
-            <Link key={order.id} href={`/client/orders/${order.id}`} as any>
+            <Link key={order.id} href={`/client/orders/${order.id}`} asChild>
               <OrderCard order={order} />
             </Link>
           ))}
@@ -95,7 +95,7 @@ export default function ClientDashboard() {
           </IconCircle>
           <Text style={styles.emptyTitle}>No orders yet</Text>
           <Text style={styles.emptyDescription}>Start by creating your first order</Text>
-          <Link href="/client/orders/new?type=dispatch" as any>
+          <Link href="/client/orders/new?type=dispatch" asChild>
             <Button
               title="Create Order"
               variant="primary"
@@ -227,7 +227,6 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   orderCard: {
-    transition: 'all 0.2s ease',
   },
   orderHeader: {
     flexDirection: 'row',

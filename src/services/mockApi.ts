@@ -1,4 +1,4 @@
-import { Order, OrderStatus, Location, User, UserRole } from '../types';
+import { Order, OrderStatus, Location, User, UserRole, RegisterData } from '../types';
 
 const mockOrders: Order[] = [
   {

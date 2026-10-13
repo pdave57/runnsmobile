@@ -54,7 +54,7 @@ export default function RiderProfile() {
     >
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <Link href="/rider/dashboard" as any style={styles.backButton}>
+          <Link href="/rider/dashboard" style={styles.backButton}>
             <ArrowLeft size={24} color="#D91E36" />
           </Link>
           <Text style={styles.pageTitle}>Profile</Text>
@@ -304,7 +304,7 @@ export default function RiderProfile() {
   );
 }
 
-import { Pressable, TrendingUp, Shield } from 'react-native';
+import { Pressable } from 'react-native';
 
 interface StatItemProps {
   label: string;

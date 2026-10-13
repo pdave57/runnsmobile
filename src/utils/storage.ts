@@ -53,7 +53,8 @@ export const storage = {
 
   async clearAll(): Promise<void> {
     try {
-      await AsyncStorage.multiRemove([STORAGE_KEYS.USER, STORAGE_KEYS.TOKEN]);
+      await AsyncStorage.removeItem(STORAGE_KEYS.USER);
+      await AsyncStorage.removeItem(STORAGE_KEYS.TOKEN);
     } catch (error) {
       console.error('Failed to clear storage:', error);
     }

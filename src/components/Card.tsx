@@ -9,21 +9,20 @@ interface CardProps {
   elevation?: number;
 }
 
+const PADDING_VALUES = {
+  none: 0,
+  sm: 16,
+  md: 24,
+  lg: 32,
+};
+
 const StyledCard = styled(View)<{ $padding: CardProps['padding']; $elevation: number }>`
-  background-color: ${({ theme }) => theme.colors.background};
-  border-radius: ${({ theme }) => theme.radii.xl};
+  background-color: #fff;
+  border-radius: 20px;
   border-width: 1px;
-  border-color: ${({ theme }) => theme.colors.border};
-  padding: ${({ $padding, theme }) => {
-    switch ($padding) {
-      case 'none': return 0;
-      case 'sm': return theme.space[3];
-      case 'md': return theme.space[6];
-      case 'lg': return theme.space[8];
-      default: return theme.space[6];
-    }
-  }};
-  shadow-color: ${({ theme }) => theme.colors.primaryBlue};
+  border-color: #f0f0f0;
+  padding: ${({ $padding }) => PADDING_VALUES[$padding || 'md']}px;
+  shadow-color: #132B5E;
   shadow-offset: 0px 4px;
   shadow-opacity: 0.05;
   shadow-radius: 12px;

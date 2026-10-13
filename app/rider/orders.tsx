@@ -32,7 +32,7 @@ export default function RiderOrders() {
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
-        <Link href="/rider/dashboard" as any style={styles.backButton}>
+        <Link href="/rider/dashboard" style={styles.backButton}>
           <ArrowLeft size={24} color="#D91E36" />
         </Link>
         <Text style={styles.pageTitle}>My Orders</Text>
@@ -71,7 +71,7 @@ export default function RiderOrders() {
       ) : filteredOrders.length > 0 ? (
         <View style={styles.ordersList}>
           {filteredOrders.map(order => (
-            <Link key={order.id} href={`/rider/orders/${order.id}`} as any>
+            <Link key={order.id} href={`/rider/orders/${order.id}`} asChild>
               <RiderOrderCard order={order} />
             </Link>
           ))}
@@ -194,7 +194,7 @@ function RiderOrderCard({ order }: RiderOrderCardProps) {
   );
 }
 
-import { Pressable, Truck } from 'react-native';
+import { Pressable } from 'react-native';
 
 const styles = StyleSheet.create({
   scrollView: {
