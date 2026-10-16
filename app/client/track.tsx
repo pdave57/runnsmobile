@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, Alert, Platform } from 'react-native';
 import { Link } from 'expo-router';
-import { ArrowLeft, Search, MapPin, Clock, Navigation, Truck, CheckCircle } from 'lucide-react-native';
+import { ArrowLeft, Search, MapPin, Clock, Navigation, Truck, CheckCircle, Map, RefreshCw } from 'lucide-react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrderTracking } from '@/hooks/useOrders';
 import { Card } from '@/components/Card';
-import { Badge, OrderStatusBadge } from '@/components/Badge';
+import { OrderStatusBadge } from '@/components/Badge';
 import { IconCircle } from '@/components/IconCircle';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
-import { Order } from '@/types';
+import { TrackMap, useDeviceLocation } from '@/components/TrackMap';
+import { Order, Location } from '@/types';
+import { api } from '@/services/api';
 
 const statusSteps = [
   { key: 'pending', label: 'Order Placed', icon: CheckCircle },
@@ -21,19 +23,47 @@ const statusSteps = [
   { key: 'delivered', label: 'Delivered', icon: CheckCircle },
 ];
 
+function calculateDistance(loc1: Location, loc2: Location): number {
+  const R = 6371; // Earth's radius in km
+  const dLat = toRad(loc2.lat - loc1.lat);
+  const dLon = toRad(loc2.lng - loc1.lng);
+  const a = 
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(loc1.lat)) * Math.cos(toRad(loc2.lat)) * 
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function toRad(deg: number): number {
+  return deg * (Math.PI / 180);
+}
+
+async function sendLocationToBackend(location: Location, orderId: string): Promise<number> {
+  try {
+    const distance = await api.calculateDistance?.(location, orderId);
+    return distance || 0;
+  } catch {
+    return 0;
+  }
+}
+
 export default function ClientTrack() {
   const { user } = useAuth();
   const [trackingCode, setTrackingCode] = useState('');
   const [order, setOrder] = useState<Order | null>(null);
-  const [searched, setSearched] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
   const { trackingData, loading } = useOrderTracking(order?.id || null);
+  
+  // Get device location for distance calculation
+  const { location: deviceLocation, error: locationError, loading: locationLoading } = useDeviceLocation();
 
   const handleSearch = async () => {
     if (!trackingCode.trim()) {
       Alert.alert('Error', 'Please enter a tracking code');
       return;
     }
-    setSearched(true);
+    setMapError(null);
     // In real app, this would call the API
     // For now, we'll simulate
     setOrder({
@@ -53,7 +83,32 @@ export default function ClientTrack() {
     });
   };
 
+  const handleCalculateDistance = useCallback(async () => {
+    if (!order || !deviceLocation) {
+      Alert.alert('Error', 'Location not available. Please enable location services.');
+      return;
+    }
+
+    const pickupDistance = calculateDistance(deviceLocation, order.pickupLocation);
+    const dropoffDistance = calculateDistance(deviceLocation, order.dropoffLocation);
+    const totalDistance = calculateDistance(order.pickupLocation, order.dropoffLocation);
+
+    Alert.alert(
+      'Distance Information',
+      `Your location to Pickup: ${pickupDistance.toFixed(2)} km\n` +
+      `Your location to Dropoff: ${dropoffDistance.toFixed(2)} km\n` +
+      `Total Route Distance: ${totalDistance.toFixed(2)} km`,
+      [{ text: 'OK' }]
+    );
+
+    // Send to backend if needed
+    if (order.id) {
+      await sendLocationToBackend(deviceLocation, order.id);
+    }
+  }, [order, deviceLocation]);
+
   const currentStatusIndex = order ? statusSteps.findIndex(s => s.key === order.status) : -1;
+  const route = trackingData?.route || (order ? [order.pickupLocation, order.dropoffLocation] : []);
 
   return (
     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
@@ -91,6 +146,31 @@ export default function ClientTrack() {
         </Card>
       ) : (
         <>
+          {/* Map View */}
+          <Card padding="none" style={styles.mapCard}>
+            {mapError && (
+              <View style={styles.mapError}>
+                <Text style={styles.mapErrorText}>{mapError}</Text>
+                <Button
+                  title="Retry"
+                  variant="outline"
+                  size="sm"
+                  onPress={() => { setMapError(null); }}
+                  style={{ marginTop: 8 }}
+                />
+              </View>
+            )}
+            <TrackMap
+              riderLocation={trackingData?.riderLocation || order.pickupLocation}
+              pickupLocation={order.pickupLocation}
+              dropoffLocation={order.dropoffLocation}
+              route={route}
+              status={order.status}
+              height={300}
+              onMapReady={() => setMapError(null)}
+            />
+          </Card>
+
           <Card padding="lg" style={styles.orderInfoCard}>
             <View style={styles.orderInfoHeader}>
               <View style={styles.orderTypeContainer}>
@@ -157,6 +237,50 @@ export default function ClientTrack() {
                 </View>
               </View>
             )}
+
+            {/* Distance Calculator */}
+            <View style={styles.distanceCalculator}>
+              <View style={styles.distanceButtonContainer}>
+                <Button
+                  title="Calculate Distance from My Location"
+                  variant="outline"
+                  fullWidth
+                  size="md"
+                  leftIcon={<Map size={20} />}
+                  rightIcon={locationLoading ? <RefreshCw size={18} /> : undefined}
+                  onPress={handleCalculateDistance}
+                  disabled={!deviceLocation || locationLoading}
+                  loading={locationLoading}
+                />
+              </View>
+              {deviceLocation && (
+                <View style={styles.deviceLocationInfo}>
+                  <Text style={styles.deviceLocationText}>
+                    Your location: {deviceLocation.lat.toFixed(6)}, {deviceLocation.lng.toFixed(6)}
+                  </Text>
+                </View>
+              )}
+              {locationError && (
+                <View style={styles.locationError}>
+                  <Text style={styles.locationErrorText}>
+                    {locationError}. Please enable location services in settings.
+                  </Text>
+                  <Button
+                    title="Open Settings"
+                    variant="outline"
+                    size="sm"
+                    onPress={() => {
+                      if (Platform.OS === 'ios') {
+                        Alert.alert('Open Settings', 'Please go to Settings > Privacy > Location Services to enable location for this app.');
+                      } else {
+                        Alert.alert('Open Settings', 'Please go to Settings > Location to enable location for this app.');
+                      }
+                    }}
+                    style={{ marginTop: 8 }}
+                  />
+                </View>
+              )}
+            </View>
           </Card>
 
           <Card padding="lg" style={styles.stepsCard}>
@@ -263,6 +387,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
+  mapCard: {
+    marginBottom: 20,
+    overflow: 'hidden',
+    borderRadius: 16,
+  },
+  mapError: {
+    height: 300,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fef2f2',
+    padding: 20,
+  },
+  mapErrorText: {
+    color: '#dc2626',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
   orderInfoCard: {
     marginBottom: 20,
   },
@@ -341,6 +482,35 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#1A1A1A',
   },
+  distanceCalculator: {
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    marginTop: 16,
+  },
+  distanceButtonContainer: {
+    marginBottom: 12,
+  },
+  deviceLocationInfo: {
+    padding: 12,
+    backgroundColor: '#f0f9ff',
+    borderRadius: 8,
+  },
+  deviceLocationText: {
+    fontSize: 13,
+    color: '#0369a1',
+    fontFamily: 'monospace',
+  },
+  locationError: {
+    padding: 12,
+    backgroundColor: '#fef2f2',
+    borderRadius: 8,
+  },
+  locationErrorText: {
+    fontSize: 13,
+    color: '#dc2626',
+    marginBottom: 8,
+  },
   stepsCard: {
     marginBottom: 20,
   },
@@ -413,4 +583,3 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 });
-

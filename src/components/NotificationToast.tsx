@@ -46,12 +46,18 @@ const ToastItem: React.FC<ToastItemProps> = ({ notification, index, hideNotifica
     return () => clearTimeout(timer);
   }, [notification.id, hideNotification]);
 
+  // Access .current in render for Animated - required pattern for react-native Animated
+  // eslint-disable-next-line react-hooks/refs
   const animatedStyle = {
+    // eslint-disable-next-line react-hooks/refs
     opacity: fadeAnim.current,
+    // eslint-disable-next-line react-hooks/refs
     transform: [{ translateX: translateAnim.current }],
   };
 
+  // eslint-disable-next-line react-hooks/refs
   return (
+    // eslint-disable-next-line react-hooks/refs
     <Animated.View style={[styles.toast, animatedStyle]} pointerEvents="box-none">
       <View style={styles.toastContent} pointerEvents="auto">
         <IconCircle size="md" bgColor={bgColor} style={styles.iconWrapper}>

@@ -6,11 +6,14 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "scheme": "runnsmobile",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.runns.mobile"
+      "bundleIdentifier": "com.runns.mobile",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Allow Runns Mobile to use your location to track deliveries",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow Runns Mobile to use your location to track deliveries"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -21,17 +24,38 @@
       },
       "package": "com.runns.mobile",
       "predictiveBackGestureEnabled": false,
-      "usesCleartextTraffic": true
+      "usesCleartextTraffic": true,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyD0RGSO5reCxoNzGmcVX7tYEnfOmB9JtRw"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-maps",
+        {
+          "requestLocationPermission": true,
+          "locationPermission": "Allow Runns Mobile to use your location to track deliveries"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Runns Mobile to use your location to track deliveries",
+          "locationWhenInUsePermission": "Allow Runns Mobile to use your location to track deliveries"
+        }
+      ],
+      "expo-image"
     ],
     "experiments": {
-      "typedRoutes": false
+      "typedRoutes": false,
+      "newArchEnabled": true
     }
   }
 }

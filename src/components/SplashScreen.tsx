@@ -12,20 +12,20 @@ const { width } = Dimensions.get('window');
 
 const SplashScreen: React.FC = () => {
     // Animation Values
-    const logoScale = useRef(new Animated.Value(0.8)).current;
-    const logoOpacity = useRef(new Animated.Value(0)).current;
-    const taglineTranslateY = useRef(new Animated.Value(20)).current;
-    const taglineOpacity = useRef(new Animated.Value(0)).current;
+    const logoScale = useRef(new Animated.Value(0.8));
+    const logoOpacity = useRef(new Animated.Value(0));
+    const taglineTranslateY = useRef(new Animated.Value(20));
+    const taglineOpacity = useRef(new Animated.Value(0));
 
     useEffect(() => {
         // Run animations on mount
         Animated.parallel([
-            Animated.timing(logoOpacity, {
+            Animated.timing(logoOpacity.current, {
                 toValue: 1,
                 duration: 800,
                 useNativeDriver: true,
             }),
-            Animated.spring(logoScale, {
+            Animated.spring(logoScale.current, {
                 toValue: 1,
                 friction: 4,
                 tension: 40,
@@ -36,12 +36,12 @@ const SplashScreen: React.FC = () => {
         // Delay tagline animation slightly for a staggered effect
         setTimeout(() => {
             Animated.parallel([
-                Animated.timing(taglineOpacity, {
+                Animated.timing(taglineOpacity.current, {
                     toValue: 1,
                     duration: 600,
                     useNativeDriver: true,
                 }),
-                Animated.timing(taglineTranslateY, {
+                Animated.timing(taglineTranslateY.current, {
                     toValue: 0,
                     duration: 600,
                     useNativeDriver: true,
@@ -50,6 +50,16 @@ const SplashScreen: React.FC = () => {
         }, 400);
     }, []);
 
+    // Access .current for Animated - required pattern for react-native Animated
+    // eslint-disable-next-line react-hooks/refs
+    const logoScaleValue = logoScale.current;
+    // eslint-disable-next-line react-hooks/refs
+    const logoOpacityValue = logoOpacity.current;
+    // eslint-disable-next-line react-hooks/refs
+    const taglineTranslateYValue = taglineTranslateY.current;
+    // eslint-disable-next-line react-hooks/refs
+    const taglineOpacityValue = taglineOpacity.current;
+
     return (
         <View style={styles.container}>
             {/* Animated Logo */}
@@ -57,8 +67,8 @@ const SplashScreen: React.FC = () => {
                 style={[
                     styles.logoContainer,
                     {
-                        opacity: logoOpacity,
-                        transform: [{ scale: logoScale }]
+                        opacity: logoOpacityValue,
+                        transform: [{ scale: logoScaleValue }]
                     }
                 ]}
             >
@@ -74,8 +84,8 @@ const SplashScreen: React.FC = () => {
                 style={[
                     styles.taglineContainer,
                     {
-                        opacity: taglineOpacity,
-                        transform: [{ translateY: taglineTranslateY }]
+                        opacity: taglineOpacityValue,
+                        transform: [{ translateY: taglineTranslateYValue }]
                     }
                 ]}
             >

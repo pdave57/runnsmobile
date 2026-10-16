@@ -680,6 +680,36 @@ class ApiService {
       return mockApi.getTrackingData(orderId);
     }
   }
+
+  // ==================== DISTANCE CALCULATION ====================
+  async calculateDistance(userLocation: Location, orderId: string): Promise<number> {
+    try {
+      const res = await this.request<{ distance: number }>('/orders/calculate-distance', {
+        method: 'POST',
+        body: JSON.stringify({
+          order_id: orderId,
+          user_latitude: userLocation.lat,
+          user_longitude: userLocation.lng,
+        }),
+      });
+      return res.distance || 0;
+    } catch {
+      // Fallback to client-side calculation
+      const order = await this.getOrderById(orderId);
+      if (!order) return 0;
+      
+      const R = 6371;
+      const toRad = (deg: number) => deg * (Math.PI / 180);
+      const dLat = toRad(order.pickupLocation.lat - userLocation.lat);
+      const dLon = toRad(order.pickupLocation.lng - userLocation.lng);
+      const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(userLocation.lat)) * Math.cos(toRad(order.pickupLocation.lat)) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+  }
 }
 
 export const api = new ApiService();

@@ -325,4 +325,21 @@ export const mockApi = {
       route: [order.pickupLocation, order.dropoffLocation],
     };
   },
+
+  async calculateDistance(userLocation: Location, orderId: string): Promise<number> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    const order = mockOrders.find(o => o.id === orderId);
+    if (!order) return 0;
+    
+    const R = 6371;
+    const toRad = (deg: number) => deg * (Math.PI / 180);
+    const dLat = toRad(order.pickupLocation.lat - userLocation.lat);
+    const dLon = toRad(order.pickupLocation.lng - userLocation.lng);
+    const a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(userLocation.lat)) * Math.cos(toRad(order.pickupLocation.lat)) * 
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  },
 };
